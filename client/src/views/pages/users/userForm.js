@@ -80,7 +80,7 @@ export default function UserForm() {
       });
 
       // navigate to view users page
-      navigate('/users/view');
+      navigate('/app/users');
 
       console.log('Server response:', await res.json());
     } catch (error) {

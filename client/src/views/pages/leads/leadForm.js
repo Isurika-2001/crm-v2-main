@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { useCallback } from 'react';
 import { Box } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
+import { useNavigate } from 'react-router-dom';
 // import { useParams } from 'react-router-dom';
 
 export default function LeadForm() {
@@ -36,6 +37,7 @@ export default function LeadForm() {
   const [selectedStatusId, setselectedStatusId] = useState('');
   const [changedFields, setChangedFields] = useState({});
   const [sid, setSid] = useState('');
+  const navigate = useNavigate();
 
   const date = new Date();
   const formattedDate = date.toISOString().split('T')[0];
@@ -235,6 +237,7 @@ export default function LeadForm() {
               return;
             }
             console.log('Data inserted successfully!');
+            navigate('/app/leads');
             // setChangedFields({});
             setValues({
               name: '',

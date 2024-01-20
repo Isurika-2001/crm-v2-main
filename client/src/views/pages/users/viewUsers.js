@@ -97,7 +97,7 @@ export default function ViewUsers() {
   
     function updateUser(userId) {
       console.log('clicked user id', userId);
-      navigate('/users/add?id=' + userId);
+      navigate('/app/users/add?id=' + userId);
     }
 
   if (loading) {

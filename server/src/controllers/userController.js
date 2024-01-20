@@ -99,7 +99,7 @@ async function login(req, res) {
     req.user = jwt.decode(token);
 
     // Return the token along with success message and user data
-    res.status(200).json({ message: "Login successful", token, userType, permissions});
+    res.status(200).json({ message: "Login successful", token, _id, userName, userType, permissions});
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ error: "Internal Server Error" });

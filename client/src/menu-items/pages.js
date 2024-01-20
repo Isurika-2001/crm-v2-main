@@ -54,14 +54,14 @@ const pages = {
           title: 'View Leads',
           type: 'item',
           external: true,
-          url: '/leads/view',
+          url: '/app/leads',
           breadcrumbs: false
         },
         {
           id: 'addLead',
           title: 'Add Lead',
           type: 'item',
-          url: '/leads/add',
+          url: '/app/leads/add',
           breadcrumbs: false
         }
       ]
@@ -77,14 +77,14 @@ const pages = {
           title: 'View Course',
           type: 'item',
           external: true,
-          url: '/courses/view',
+          url: '/app/courses',
           breadcrumbs: false
         },
         {
           id: 'addLead',
           title: 'Add Course',
           type: 'item',
-          url: '/courses/add',
+          url: '/app/courses/add',
           breadcrumbs: false
         }
       ]
@@ -100,14 +100,14 @@ const pages = {
           title: 'View User',
           type: 'item',
           external: true,
-          url: '/users/view',
+          url: '/app/users',
           breadcrumbs: false
         },
         {
           id: 'addLead',
           title: 'Add User',
           type: 'item',
-          url: '/users/add',
+          url: '/app/users/add',
           breadcrumbs: false
         }
       ]

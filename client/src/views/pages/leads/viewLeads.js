@@ -98,7 +98,7 @@ export default function ViewLeads() {
 
   function updateLead(leadId) {
     console.log('clicked lead id', leadId);
-    navigate('/leads/add?id=' + leadId);
+    navigate('/app/leads/add?id=' + leadId);
   }
 
   // const rows = [

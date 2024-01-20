@@ -19,6 +19,9 @@ const ViewUsers = Loadable(lazy(() => import('views/pages/users/viewUsers')));
 export default function ThemeRoutes() {
   const { user } = useAuthContext();
 
+  // console log user
+  console.log(user);
+
   return (
     <Routes>
       {/*<Route*/}
@@ -34,14 +37,17 @@ export default function ThemeRoutes() {
         <Route path="leads" element={<Outlet></Outlet>}>
           <Route index element={<ViewLead />} />
           <Route path="add" element={<AddLead />} />
+          <Route path="add/:id" element={<AddLead />} />
         </Route>
         <Route path="courses" element={<Outlet></Outlet>}>
           <Route index element={<ViewCourses />} />
           <Route path="add" element={<AddCourse />} />
+          <Route path="add/:id" element={<AddCourse />} />
         </Route>
         <Route path="users" element={<Outlet></Outlet>}>
           <Route index element={<ViewUsers />} />
           <Route path="add" element={<AddUser />} />
+          <Route path="add/:id" element={<AddUser />} />
         </Route>
       </Route>
 

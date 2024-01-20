@@ -15,14 +15,13 @@ import {
   OutlinedInput,
   Stack,
   Divider,
-  Alert,
+  Alert
 } from '@mui/material';
 
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import {useLogin} from "../../../../hooks/useLogin";
-
+import { useLogin } from '../../../../hooks/useLogin';
 
 // project imports
 import useScriptRef from 'hooks/useScriptRef';
@@ -32,7 +31,6 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ ...others }) => {
@@ -40,7 +38,7 @@ const FirebaseLogin = ({ ...others }) => {
   const scriptedRef = useScriptRef();
   const [checked, setChecked] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const {login,error} = useLogin();
+  const { login, error } = useLogin();
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -50,8 +48,6 @@ const FirebaseLogin = ({ ...others }) => {
 
   return (
     <>
-      
-
       <Formik
         initialValues={{
           email: '',
@@ -65,13 +61,11 @@ const FirebaseLogin = ({ ...others }) => {
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
             await login(values);
-
           } catch (err) {
             helpers.setStatus({ success: false });
             helpers.setErrors({ submit: error });
             helpers.setSubmitting(false);
           }
-
 
           try {
             if (scriptedRef.current) {
@@ -147,7 +141,6 @@ const FirebaseLogin = ({ ...others }) => {
                 }
                 label="Remember me"
               />
-              
             </Stack>
             {errors.submit && (
               <Box sx={{ mt: 3 }}>
@@ -155,16 +148,14 @@ const FirebaseLogin = ({ ...others }) => {
               </Box>
             )}
 
-            
-
             {error && (
               <Box>
-                <Divider style={{height:"10px"}} sx={{ flexGrow: 1 }} orientation="horizontal" />
+                <Divider style={{ height: '10px' }} sx={{ flexGrow: 1 }} orientation="horizontal" />
 
                 <Alert severity="error">{error}</Alert>
-                <Divider style={{height:"10px"}} sx={{ flexGrow: 1 }} orientation="horizontal" />
+                <Divider style={{ height: '10px' }} sx={{ flexGrow: 1 }} orientation="horizontal" />
               </Box>
-            )}  
+            )}
 
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
