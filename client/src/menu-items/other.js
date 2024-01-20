@@ -26,6 +26,14 @@ const other = {
       icon: icons.IconHelp,
       external: true,
       target: true
+    },
+    {
+      id: 'access-denied',
+      title: 'Access Denied',
+      type: 'item',
+      url: '/app/access-denied',
+      icon: icons.IconHelp,
+      breadcrumbs: false
     }
   ]
 };
