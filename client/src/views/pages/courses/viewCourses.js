@@ -65,6 +65,8 @@ export default function ViewCourses() {
       description: 'This column has a value getter and is not sortable.',
       sortable: false,
       width: 200,
+      align: 'right',
+      headerAlign: 'right',
       renderCell: (params) => (
         <>
           <IconButton style={{ backgroundColor: 'white' }}>
@@ -116,7 +118,7 @@ export default function ViewCourses() {
                 onChange={handleSearch} // Call handleSearch on input change
               />
             </Grid>
-            <Grid item xs={12} sm={12}>
+            <Grid item xs={12} sm={12} >
               <div style={{ height: 400, width: '100%' }}>
                 <DataGrid
                   rows={filteredData.length > 0 ? filteredData : courseData} // Use filteredData if available, else use courseData
