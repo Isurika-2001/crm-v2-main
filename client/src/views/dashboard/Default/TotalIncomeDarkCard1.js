@@ -1,20 +1,22 @@
 import PropTypes from 'prop-types';
-import config from '../../../config';
 import React, { useState, useEffect } from 'react';
 
 // material-ui
-import { useTheme, styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
+import config from '../../../config';
 
 // assets
-import EarningIcon from 'assets/images/icons/fake.svg';
+import EarningIcon from 'assets/images/icons/duplicate-svgrepo.svg';
+
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: '#994D1C',
+  backgroundColor: '#508D69',
+  color: theme.palette.primary.light,
   overflow: 'hidden',
   position: 'relative',
   '&:after': {
@@ -22,7 +24,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(210.04deg, ${theme.palette.warning.dark} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
+    background: '#80b567',
     borderRadius: '50%',
     top: -30,
     right: -180
@@ -32,16 +34,16 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(140.9deg, ${theme.palette.warning.dark} -14.02%, rgba(144, 202, 249, 0) 70.50%)`,
+    background: '#80b567',
     borderRadius: '50%',
     top: -160,
     right: -130
   }
 }));
 
-// ==============================|| DASHBOARD - TOTAL INCOME LIGHT CARD ||============================== //
+// ==============================|| DASHBOARD - TOTAL INCOME DARK CARD ||============================== //
 
-const TotalIncomeLightCard = ({ isLoading }) => {
+const TotalIncomeDarkCard = ({ isLoading }) => {
   const theme = useTheme();
 
   const [data, setData] = useState([]);
@@ -79,8 +81,8 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                     sx={{
                       ...theme.typography.commonAvatar,
                       ...theme.typography.largeAvatar,
-                      backgroundColor: '#804118',
-                      color: theme.palette.warning.dark
+                      backgroundColor: '#345e45',
+                      color: '#fff'
                     }}
                   >
                     <img src={EarningIcon} alt="Notification" />
@@ -93,19 +95,13 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                     mb: 0.45
                   }}
                   primary={
-                    <Typography variant="h4" style={{ color: 'white' }}>
-                      {data.cousedetailsCount}
+                    <Typography variant="h4" sx={{ color: '#fff' }}>
+                      {data.duplicateCount}
                     </Typography>
                   }
                   secondary={
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        color: '#fff',
-                        mt: 0.5
-                      }}
-                    >
-                      FAKE
+                    <Typography variant="subtitle2" sx={{ color: 'primary.light', mt: 0.25 }}>
+                      DUPLICATE
                     </Typography>
                   }
                 />
@@ -118,8 +114,8 @@ const TotalIncomeLightCard = ({ isLoading }) => {
   );
 };
 
-TotalIncomeLightCard.propTypes = {
+TotalIncomeDarkCard.propTypes = {
   isLoading: PropTypes.bool
 };
 
-export default TotalIncomeLightCard;
+export default TotalIncomeDarkCard;

@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Grid, MenuItem, TextField, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
+import config from '../../../config';
 
 // third-party
 import ApexCharts from 'apexcharts';
@@ -18,25 +19,9 @@ import { gridSpacing } from 'store/constant';
 // chart data
 import chartData from './chart-data/total-growth-bar-chart';
 
-const status = [
-  {
-    value: 'today',
-    label: 'Today'
-  },
-  {
-    value: 'month',
-    label: 'This Month'
-  },
-  {
-    value: 'year',
-    label: 'This Year'
-  }
-];
-
 // ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
 
 const TotalGrowthBarChart = ({ isLoading }) => {
-  const [value, setValue] = useState('today');
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
 
@@ -50,6 +35,66 @@ const TotalGrowthBarChart = ({ isLoading }) => {
   const primaryDark = theme.palette.primary.dark;
   const secondaryMain = theme.palette.secondary.main;
   const secondaryLight = theme.palette.secondary.light;
+
+  // const [leadData, setLeadData] = useState([]);
+  const [leadsCountByMonth, setLeadsCountByMonth] = useState({});
+
+  //  frech leads details
+
+  async function fetchLeads() {
+    try {
+      const response = await fetch(config.apiUrl + 'api/leads');
+      const leadData = await response.json();
+
+      // Group leads by month
+      const groupedLeads = groupLeadsByMonth(leadData);
+
+      // Get the count of leads for each month
+      const leadsCountByMonth = getLeadsCountByMonth(groupedLeads);
+
+      // // Do something with the leads count, for example:
+      // console.log(leadsCountByMonth);
+
+      // Set the leads count and update state
+      setLeadsCountByMonth(leadsCountByMonth);
+      setIsTrue(true);
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    }
+  }
+
+  function groupLeadsByMonth(leadData) {
+    const groupedLeads = {};
+
+    leadData.forEach((lead) => {
+      const date = new Date(lead.date);
+      const monthYear = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(date);
+
+      if (!groupedLeads[monthYear]) {
+        groupedLeads[monthYear] = [];
+      }
+
+      groupedLeads[monthYear].push(lead);
+    });
+
+    return groupedLeads;
+  }
+
+  function getLeadsCountByMonth(groupedLeads) {
+    const leadsCountByMonth = {};
+
+    // Calculate the count of leads for each month
+    for (const monthYear in groupedLeads) {
+      const leadsCount = groupedLeads[monthYear].length;
+      leadsCountByMonth[monthYear] = leadsCount;
+    }
+
+    return leadsCountByMonth;
+  }
+
+  useEffect(() => {
+    fetchLeads();
+  }, []);
 
   useEffect(() => {
     const newChartData = {
@@ -100,26 +145,92 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="subtitle2">Total Growth</Typography>
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="h3">$2,324.00</Typography>
+                      <Typography variant="subtitle2" style={{ color: 'black', fontWeight: 'bold', fontSize: '16px' }}>
+                        Leads Progress
+                      </Typography>
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item>
-                  <TextField id="standard-select-currency" select value={value} onChange={(e) => setValue(e.target.value)}>
-                    {status.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
+                <Grid item></Grid>
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Chart {...chartData} />
+              <Chart
+                height={480}
+                type="bar"
+                options={{
+                  chart: {
+                    id: 'bar-chart',
+                    stacked: true,
+                    toolbar: {
+                      show: true
+                    },
+                    zoom: {
+                      enabled: true
+                    }
+                  },
+                  responsive: [
+                    {
+                      breakpoint: 480,
+                      options: {
+                        legend: {
+                          position: 'bottom',
+                          offsetX: -10,
+                          offsetY: 0
+                        }
+                      }
+                    }
+                  ],
+                  plotOptions: {
+                    bar: {
+                      horizontal: false,
+                      columnWidth: '50%'
+                    }
+                  },
+                  xaxis: {
+                    type: 'category',
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                  },
+                  legend: {
+                    show: true,
+                    fontSize: '14px',
+                    fontFamily: `'Roboto', sans-serif`,
+                    position: 'bottom',
+                    offsetX: 20,
+                    labels: {
+                      useSeriesColors: false
+                    },
+                    markers: {
+                      width: 16,
+                      height: 16,
+                      radius: 5
+                    },
+                    itemMargin: {
+                      horizontal: 15,
+                      vertical: 8
+                    }
+                  },
+                  fill: {
+                    type: 'solid'
+                  },
+                  dataLabels: {
+                    enabled: false
+                  },
+                  grid: {
+                    show: true
+                  }
+                }}
+                series={[
+                  {
+                    name: 'last year',
+                    data: [35, 15, 0, 20, 10, 15, 25, 35, 20, 25, 15, 20]
+                  },
+                  {
+                    name: 'This year',
+                    data: Object.values(leadsCountByMonth)
+                  }
+                ]}
+              />
             </Grid>
           </Grid>
         </MainCard>

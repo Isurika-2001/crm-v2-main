@@ -1,33 +1,24 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import config from '../../../config';
 
 // material-ui
-import { useTheme, styled } from '@mui/material/styles';
-import { Avatar, Box, Button, Grid, Typography } from '@mui/material';
-
-// third-party
-import Chart from 'react-apexcharts';
+import { styled, useTheme } from '@mui/material/styles';
+import { Avatar, Box, Grid, Typography } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
-
-import ChartDataMonth from './chart-data/total-order-month-line-chart';
-import ChartDataYear from './chart-data/total-order-year-line-chart';
+import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 
 // assets
-import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import EarningIcon from 'assets/images/icons/phone-hang-up-svgrepo.svg';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
   color: '#fff',
   overflow: 'hidden',
   position: 'relative',
-  '&>div': {
-    position: 'relative',
-    zIndex: 5
-  },
   '&:after': {
     content: '""',
     position: 'absolute',
@@ -35,7 +26,6 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     height: 210,
     background: theme.palette.primary[800],
     borderRadius: '50%',
-    zIndex: 1,
     top: -85,
     right: -95,
     [theme.breakpoints.down('sm')]: {
@@ -46,7 +36,6 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   '&:before': {
     content: '""',
     position: 'absolute',
-    zIndex: 1,
     width: 210,
     height: 210,
     background: theme.palette.primary[800],
@@ -61,20 +50,37 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   }
 }));
 
-// ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
+// ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const TotalOrderLineChartCard = ({ isLoading }) => {
+const EarningCard = ({ isLoading }) => {
   const theme = useTheme();
 
-  const [timeValue, setTimeValue] = useState(false);
-  const handleChangeTime = (event, newValue) => {
-    setTimeValue(newValue);
-  };
+  const [data, setData] = useState([]);
+
+  //fetch status details
+
+  async function fetchStatusDetails() {
+    try {
+      const response = await fetch(config.apiUrl + 'api/followupsdate');
+      const getdata = await response.json();
+      // console.log(getdata);
+      setData(getdata);
+      // setIsTrue(true);
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    }
+  }
+
+  useEffect(() => {
+    fetchStatusDetails();
+  }, []);
+
+  console.log(data.NewCount);
 
   return (
     <>
       {isLoading ? (
-        <SkeletonTotalOrderCard />
+        <SkeletonEarningCard />
       ) : (
         <CardWrapper border={false} content={false}>
           <Box sx={{ p: 2.25 }}>
@@ -88,75 +94,34 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                         ...theme.typography.commonAvatar,
                         ...theme.typography.largeAvatar,
                         backgroundColor: theme.palette.primary[800],
-                        color: '#fff',
                         mt: 1
                       }}
                     >
-                      <LocalMallOutlinedIcon fontSize="inherit" />
+                      <img src={EarningIcon} alt="Notification" />
                     </Avatar>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      disableElevation
-                      variant={timeValue ? 'contained' : 'text'}
-                      size="small"
-                      sx={{ color: 'inherit' }}
-                      onClick={(e) => handleChangeTime(e, true)}
-                    >
-                      Month
-                    </Button>
-                    <Button
-                      disableElevation
-                      variant={!timeValue ? 'contained' : 'text'}
-                      size="small"
-                      sx={{ color: 'inherit' }}
-                      onClick={(e) => handleChangeTime(e, false)}
-                    >
-                      Year
-                    </Button>
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item sx={{ mb: 0.75 }}>
+              <Grid item>
                 <Grid container alignItems="center">
-                  <Grid item xs={6}>
-                    <Grid container alignItems="center">
-                      <Grid item>
-                        {timeValue ? (
-                          <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>$108</Typography>
-                        ) : (
-                          <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>$961</Typography>
-                        )}
-                      </Grid>
-                      <Grid item>
-                        <Avatar
-                          sx={{
-                            ...theme.typography.smallAvatar,
-                            cursor: 'pointer',
-                            backgroundColor: theme.palette.primary[200],
-                            color: theme.palette.primary.dark
-                          }}
-                        >
-                          <ArrowDownwardIcon fontSize="inherit" sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }} />
-                        </Avatar>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Typography
-                          sx={{
-                            fontSize: '1rem',
-                            fontWeight: 500,
-                            color: theme.palette.primary[200]
-                          }}
-                        >
-                          Total Order
-                        </Typography>
-                      </Grid>
-                    </Grid>
+                  <Grid item>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
+                      {data?.ringNoAnswerCount}
+                    </Typography>
                   </Grid>
-                  <Grid item xs={6}>
-                    {timeValue ? <Chart {...ChartDataMonth} /> : <Chart {...ChartDataYear} />}
-                  </Grid>
+                  <Grid item></Grid>
                 </Grid>
+              </Grid>
+              <Grid item sx={{ mb: 1.25 }}>
+                <Typography
+                  sx={{
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    color: '#fff'
+                  }}
+                >
+                  DROPPED
+                </Typography>
               </Grid>
             </Grid>
           </Box>
@@ -166,8 +131,8 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
   );
 };
 
-TotalOrderLineChartCard.propTypes = {
+EarningCard.propTypes = {
   isLoading: PropTypes.bool
 };
 
-export default TotalOrderLineChartCard;
+export default EarningCard;

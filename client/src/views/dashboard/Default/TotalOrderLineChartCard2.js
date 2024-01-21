@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import config from '../../../config';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -11,12 +12,10 @@ import MainCard from 'ui-component/cards/MainCard';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 
 // assets
-import EarningIcon from 'assets/images/icons/new.svg';
-
-import config from '../../../config';
+import EarningIcon from 'assets/images/icons/inteke.svg';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.dark,
+  backgroundColor: '#3f33a3',
   color: '#fff',
   overflow: 'hidden',
   position: 'relative',
@@ -25,7 +24,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: theme.palette.secondary[800],
+    background: '#2f267a',
     borderRadius: '50%',
     top: -85,
     right: -95,
@@ -39,7 +38,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: theme.palette.secondary[800],
+    background: '#2f267a',
     borderRadius: '50%',
     top: -125,
     right: -15,
@@ -94,7 +93,7 @@ const EarningCard = ({ isLoading }) => {
                       sx={{
                         ...theme.typography.commonAvatar,
                         ...theme.typography.largeAvatar,
-                        backgroundColor: theme.palette.secondary[800],
+                        backgroundColor: '#231c5c',
                         mt: 1
                       }}
                     >
@@ -106,7 +105,9 @@ const EarningCard = ({ isLoading }) => {
               <Grid item>
                 <Grid container alignItems="center">
                   <Grid item>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{data?.NewCount}</Typography>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
+                      {data?.nextintakeCount}
+                    </Typography>
                   </Grid>
                   <Grid item></Grid>
                 </Grid>
@@ -119,7 +120,7 @@ const EarningCard = ({ isLoading }) => {
                     color: '#fff'
                   }}
                 >
-                  NEW
+                  NEXT INTAKE
                 </Typography>
               </Grid>
             </Grid>

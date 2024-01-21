@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import config from '../../../config';
 import React, { useState, useEffect } from 'react';
+import config from '../../../config';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -11,10 +11,11 @@ import MainCard from 'ui-component/cards/MainCard';
 import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
 
 // assets
-import EarningIcon from 'assets/images/icons/fake.svg';
+import EarningIcon from 'assets/images/icons/details.svg';
+
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: '#994D1C',
+  backgroundColor: ' #c26a4c',
   overflow: 'hidden',
   position: 'relative',
   '&:after': {
@@ -79,7 +80,7 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                     sx={{
                       ...theme.typography.commonAvatar,
                       ...theme.typography.largeAvatar,
-                      backgroundColor: '#804118',
+                      backgroundColor: '#8f4e38',
                       color: theme.palette.warning.dark
                     }}
                   >
@@ -105,7 +106,7 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                         mt: 0.5
                       }}
                     >
-                      FAKE
+                      COUSE DETAILS SENT
                     </Typography>
                   }
                 />

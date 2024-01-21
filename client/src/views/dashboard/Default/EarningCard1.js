@@ -5,18 +5,17 @@ import { useEffect } from 'react';
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
 import { Avatar, Box, Grid, Typography } from '@mui/material';
+import config from '../../../config';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 
 // assets
-import EarningIcon from 'assets/images/icons/new.svg';
-
-import config from '../../../config';
+import EarningIcon from 'assets/images/icons/register.svg';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.dark,
+  backgroundColor: '#994D1C',
   color: '#fff',
   overflow: 'hidden',
   position: 'relative',
@@ -25,7 +24,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: theme.palette.secondary[800],
+    background: '#E48F45',
     borderRadius: '50%',
     top: -85,
     right: -95,
@@ -39,7 +38,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: theme.palette.secondary[800],
+    background: '#E48F45',
     borderRadius: '50%',
     top: -125,
     right: -15,
@@ -94,7 +93,7 @@ const EarningCard = ({ isLoading }) => {
                       sx={{
                         ...theme.typography.commonAvatar,
                         ...theme.typography.largeAvatar,
-                        backgroundColor: theme.palette.secondary[800],
+                        backgroundColor: '#804118',
                         mt: 1
                       }}
                     >
@@ -106,7 +105,9 @@ const EarningCard = ({ isLoading }) => {
               <Grid item>
                 <Grid container alignItems="center">
                   <Grid item>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{data?.NewCount}</Typography>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
+                      {data?.registeredCount}
+                    </Typography>
                   </Grid>
                   <Grid item></Grid>
                 </Grid>
@@ -116,10 +117,10 @@ const EarningCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
-                    color: '#fff'
+                    color: 'fff'
                   }}
                 >
-                  NEW
+                  REGISTERED
                 </Typography>
               </Grid>
             </Grid>
