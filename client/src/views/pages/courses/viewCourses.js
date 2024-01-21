@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
-import { useMediaQuery, Typography, TextField, InputAdornment } from '@mui/material';
+import { useMediaQuery, Typography, TextField, InputAdornment, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import ModeIcon from '@mui/icons-material/Mode';
@@ -58,7 +58,7 @@ export default function ViewCourses() {
   const columns = [
     { field: 'name', headerName: 'Course Name', width: 200 },
 
-    { field: 'description', headerName: 'Course Description', width: 1200 },
+    { field: 'description', headerName: 'Course Description', width: 600 },
     {
       field: 'edit',
       headerName: '',
@@ -67,13 +67,18 @@ export default function ViewCourses() {
       width: 200,
       renderCell: (params) => (
         <>
-          <ModeIcon
-            onClick={() => {
-              updateCourse(params.row._id);
-            }}
-            style={{ color: 'black' }}
-          />
-          <DeleteIcon style={{ color: 'black', margin: 20 }} />
+          <IconButton style={{ backgroundColor: 'white' }}>
+            <ModeIcon
+              onClick={() => {
+                updateCourse(params.row._id);
+              }}
+              style={{ color: 'gray' }}
+            />
+          </IconButton>
+
+          <IconButton style={{ margin: 10, backgroundColor: 'white' }}>
+            <DeleteIcon style={{ color: "gray" }} />
+          </IconButton>
         </>
       )
     }
@@ -101,7 +106,6 @@ export default function ViewCourses() {
                 type="text"
                 SelectProps={{ native: true }}
                 defaultValue=""
-                sx={{ ...theme.typography.customInput }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
