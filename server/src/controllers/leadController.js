@@ -1,7 +1,7 @@
 const Lead = require("../models/lead");
 const Course = require("../models/course");
 const Branch = require("../models/branch");
-const Status = require("../models/status");
+const Source = require("../models/source");
 const Student = require("../models/student");
 const FollowUp = require("../models/followUp");
 const { default: mongoose } = require("mongoose");
@@ -64,6 +64,12 @@ async function addLead(req, res) {
     res.status(400).json({ error: "no such user" });
   }
 
+  //check if source name exist in source table
+  const source_doucument = await Source.findOne({ name: 'manual' });
+  if (!source_doucument) {
+    res.status(400).json({ error: `source not found: manual` });
+  }
+
   var cid = null;
 
   const leastAllocatedCounselor = await getLeastAllocatedCounselor();
@@ -83,7 +89,8 @@ async function addLead(req, res) {
       branch_id: branch_doucument._id,
       student_id: student_id,
       user_id: user_id,
-      counsellor_id: cid
+      counsellor_id: cid,
+      source_id: source_doucument._id
     });
     res.status(200).json(newLead);
   } catch (error) {
