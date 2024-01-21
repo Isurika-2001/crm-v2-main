@@ -89,7 +89,6 @@ export default function CourseForm() {
                   type="text"
                   value={courseData.name}
                   onChange={(e) => setCourseData({ ...courseData, name: e.target.value })}
-                  sx={{ ...theme.typography.customInput }}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -111,7 +110,6 @@ export default function CourseForm() {
                   type="text"
                   value={courseData.code}
                   onChange={(e) => setCourseData({ ...courseData, code: e.target.value })}
-                  sx={{ ...theme.typography.customInput }}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -134,7 +132,6 @@ export default function CourseForm() {
                   type="text"
                   value={courseData.description}
                   onChange={(e) => setCourseData({ ...courseData, description: e.target.value })}
-                  sx={{ ...theme.typography.customInput }}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
