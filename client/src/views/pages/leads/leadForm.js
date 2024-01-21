@@ -2,9 +2,9 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
-import { Button, CardActions, Divider, InputAdornment, Typography, useMediaQuery } from '@mui/material';
+import { Autocomplete, Button, CardActions, Divider, InputAdornment, Typography, debounce, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { AccountCircle } from '@mui/icons-material';
+// import { AccountCircle } from '@mui/icons-material';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import EmailIcon from '@mui/icons-material/Email';
 import HomeIcon from '@mui/icons-material/Home';
@@ -37,19 +37,11 @@ export default function LeadForm() {
   const [selectedStatusId, setselectedStatusId] = useState('');
   const [changedFields, setChangedFields] = useState({});
   const [sid, setSid] = useState('');
+  const [studentOptions, setStudentOptions] = useState([]);
   const navigate = useNavigate();
 
   const date = new Date();
   const formattedDate = date.toISOString().split('T')[0];
-
-  // function formatDate(inputDate) {
-  //     const date = new Date(inputDate);
-  //     const month = String(date.getMonth() + 1).padStart(2, "0");
-  //     const day = String(date.getDate()).padStart(2, "0");
-  //     const year = date.getFullYear();
-  //     const formattedD = `${year}-${month}-${day}`;
-  //     return formattedD;
-  // }
 
   const [values, setValues] = useState({
     name: '',
@@ -117,6 +109,7 @@ export default function LeadForm() {
         const json = await response.json();
         setValues(json);
         setSid(json.student_id);
+        console.log(json.name);
       } else {
         console.error('Error fetching  Lead:', response.statusText);
       }
@@ -124,6 +117,14 @@ export default function LeadForm() {
       console.error('Error fetching Lead:', error.message);
     }
   };
+  function formatDate(inputDate) {
+    const date = new Date(inputDate);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    const formattedD = `${year}-${month}-${day}`;
+    return formattedD;
+  }
 
   useEffect(() => {
     fetchCourses();
@@ -132,7 +133,30 @@ export default function LeadForm() {
     if (leadId) {
       fetchLeadData();
     }
-  }, []);
+    const fetchStudents = async (searchTerm) => {
+      try {
+        const response = await fetch(`https://localhost:8080/api/searchStudents?term=${searchTerm}`);
+        if (response.ok) {
+          const students = await response.json();
+          setStudentOptions(students);
+          console.log('ok', studentOptions);
+          console.log(students);
+        } else {
+          console.error('Error fetching students:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching students:', error.message);
+      }
+    };
+
+    // Use the debounce function to avoid making too many requests in a short time
+    const debouncedFetchStudents = debounce(fetchStudents, 300);
+
+    // Update student options when the name value changes
+    if (values.name) {
+      debouncedFetchStudents(values.name);
+    }
+  }, [values.name]);
 
   const handleChange = useCallback(
     (event) => {
@@ -141,6 +165,7 @@ export default function LeadForm() {
         ...prevState,
         [name]: value
       }));
+      console.log(values.name);
       setChangedFields((prevChangedFields) => ({
         ...prevChangedFields,
         [name]: value
@@ -238,7 +263,7 @@ export default function LeadForm() {
             }
             console.log('Data inserted successfully!');
             navigate('/app/leads');
-            // setChangedFields({});
+
             setValues({
               name: '',
               dob: '',
@@ -385,20 +410,39 @@ export default function LeadForm() {
                 <Typography variant="h5" component="h5">
                   Name
                 </Typography>
-                <TextField
-                  fullWidth
-                  // label="First Name"
-                  margin="normal"
-                  name="name"
-                  type="text"
-                  onChange={handleChange}
-                  value={values.name}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AccountCircle />
-                      </InputAdornment>
-                    )
+                <Autocomplete
+                  options={studentOptions}
+                  freeSolo
+                  getOptionLabel={(option) => option.name || ''}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      // label="First Name"
+                      margin="normal"
+                      name="name"
+                      type="text"
+                      onChange={handleChange}
+                      value={values.name}
+                      helperText="Please specify the student name"
+                    />
+                  )}
+                  // Add an event handler for selecting an option
+                  onChange={(event, newValue) => {
+                    if (newValue) {
+                      // Update other student-related fields if needed
+                      setValues((prevValues) => ({
+                        ...prevValues,
+                        dob: formatDate(newValue.dob) || '',
+                        email: newValue.email || '',
+                        contact_no: newValue.contact_no || '',
+                        address: newValue.address || '',
+                        date: formatDate(newValue.date) || '',
+                        scheduled_to: newValue.scheduled_to || '',
+                        course: newValue.course || '',
+                        branch: newValue.branch || ''
+                      }));
+                    }
                   }}
                 />
               </Grid>

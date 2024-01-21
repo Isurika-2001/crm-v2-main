@@ -17,12 +17,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useAuthContext } from '../../../context/useAuthContext';
 
 export default function ViewLeads() {
-  // const { user } = useAuthContext();
-  // const { permissions } = user || {};
-
   const navigate = useNavigate();
   // const { id } = useParams();
   const theme = useTheme();
@@ -33,6 +29,7 @@ export default function ViewLeads() {
     internal: <TimelineIcon color="primary" style={{ color: 'orange' }} />
   };
   const [courses, setCourses] = useState([]);
+  const [source, setSources] = useState([]);
 
   // const top100Films = [
 
@@ -47,7 +44,7 @@ export default function ViewLeads() {
 
   const columns = [
     { field: 'name', headerName: 'Student Name', width: 200 },
-    { field: 'icon', headerName: 'Source', width: 150, renderCell: (params) => iconComponentMap[params.row.icon] },
+    { field: 'source', headerName: 'Source', width: 150, renderCell: (params) => iconComponentMap[params.row.icon] },
     { field: 'status', headerName: 'Status', width: 150 },
     { field: 'scheduled_to', headerName: 'Scheduled To', width: 200 },
     {
@@ -68,7 +65,7 @@ export default function ViewLeads() {
       description: 'This column has a value getter and is not sortable.',
       sortable: false,
       width: 300,
-      renderCell: () => (
+      renderCell: (params) => (
         <>
           <Autocomplete
             disablePortal
@@ -76,6 +73,39 @@ export default function ViewLeads() {
             options={counselors}
             sx={{ width: 200, my: 2 }}
             renderInput={(params) => <TextField {...params} label="Choose a counsellor" variant="standard" />}
+            value={params.row.counsellor}
+            // isOptionEqualToValue={(option, value) => option.id === value.id && option.label === value.label}
+            onChange={(event, newValue) => {
+              // Handle the selection here
+              console.log('cid1', params.row.counsellor);
+              console.log('cid', newValue.label);
+              console.log('lid', params.row.id);
+              const lid = params.row.id;
+              const cid = newValue.id;
+              params.row.counsellor = newValue.label;
+
+              const updateLead = async () => {
+                try {
+                  const updateLead = await fetch(`https://localhost:8080/api/leads/${lid}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      counsellor_id: cid
+                    })
+                  });
+                  if (!updateLead.ok) {
+                    console.error('Error updating lead data', updateLead.statusText);
+                    return;
+                  } else {
+                    console.log(newValue.label);
+                    console.log('Successfully assigned');
+                  }
+                } catch (error) {
+                  console.log(error);
+                }
+              };
+              updateLead();
+            }}
           />
         </>
       )
@@ -144,12 +174,24 @@ export default function ViewLeads() {
       }
     };
     fetchCourses();
+    const fetchSources = async () => {
+      try {
+        const response = await fetch('https://localhost:8080/api/source');
+        if (response.ok) {
+          const json = await response.json();
+          setSources(json);
+        } else {
+          console.error('Error fetching sources:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching sources:', error.message);
+      }
+    };
+    fetchSources();
     async function getCounselors() {
       try {
         const res = await fetch('https://localhost:8080/api/getCounsellors');
         const data = await res.json();
-
-        console.log(data);
         setCounselors(data);
       } catch (error) {
         console.log('Error fetching counselors:', error);
@@ -240,7 +282,19 @@ export default function ViewLeads() {
                         </InputAdornment>
                       )
                     }}
-                  />
+                  >
+                    {source && source.length > 0 ? (
+                      source.map((option) => (
+                        <option key={option._id} value={option.name}>
+                          {option.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="" disabled>
+                        No Sources available
+                      </option>
+                    )}
+                  </TextField>
                 </Grid>
                 <Grid item xs={12} sm={3}>
                   <Typography variant="h5" component="h5">

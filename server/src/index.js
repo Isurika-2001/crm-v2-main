@@ -14,6 +14,7 @@ const branchRoutes = require("./routes/branchRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const statusRoutes = require("./routes/statusRoutes");
 const folowUpRoutes = require("./routes/folowUpRoutes");
+const sourceRoutes = require("./routes/sourceRoutes");
 const logFunctionExecution = require("./middleware/log");
 
 const app = express();
@@ -33,7 +34,7 @@ app.use(logFunctionExecution);
 app.get("/", (req, res) => {
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/plain");
-  res.end("Hello, world Isurika!");
+  res.end("Hello, world CEEE!");
 });
 
 // Use the student routes
@@ -45,6 +46,7 @@ app.use("/api", branchRoutes);
 app.use("/api", courseRoutes);
 app.use("/api", statusRoutes);
 app.use("/api", folowUpRoutes);
+app.use("/api", sourceRoutes);
 
 const httpsOptions = {
   key: fs.readFileSync(path.join(__dirname, "../server.key")),

@@ -5,6 +5,7 @@ const Status = require("../models/status");
 const Student = require("../models/student");
 const FollowUp = require("../models/followUp");
 const { default: mongoose } = require("mongoose");
+const User = require("../models/user");
 
 //get all leads
 async function getLeads(req, res) {
@@ -136,8 +137,8 @@ async function getLeadsSummaryDetails(req, res) {
       const leadDetail = {
         id: lead._id,
         date: lead.date,
-        scheduled_at: lead.scheduled_at,
-        scheduled_to: lead.scheduled_to,
+        scheduled_at: formatDate(lead.scheduled_at),
+        scheduled_to: formatDate(lead.scheduled_to),
         name: lead.student_id.name,
         contact_no: lead.student_id.contact_no,
         course: lead.course_id.name,
@@ -271,7 +272,8 @@ async function allocateLeadsToCounselors() {
   }
 }
 
-setInterval(allocateLeadsToCounselors, 60000);
+setInterval(allocateLeadsToCounselors,60000);
+
 
 async function getLeastAllocatedCounselor() {
   try {
@@ -285,7 +287,7 @@ async function getLeastAllocatedCounselor() {
       },
       {
         $lookup: {
-          from: "users", // The name of the User model collection in your database
+          from: 'users', // The name of the User model collection in your database
           localField: "_id",
           foreignField: "_id",
           as: "counselor",
