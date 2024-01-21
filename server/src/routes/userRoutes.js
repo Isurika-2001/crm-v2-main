@@ -11,5 +11,6 @@ router.put("/users/:id", userController.updateUserById);
 router.get("/users_by_type/:user_type", userController.getUsersByUserType);
 router.put("/disable-enable-user/:id", userController.handleEnableDisable);
 router.get("/getCounsellors", userController.getCounsellors);
+router.put("/updatePassword/:id", userController.updateUserByIdUsernamePassword);
 
 module.exports = router;

@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 async function getUsers(req, res) {
-
   // fetch all users with user_type populated
   try {
     const users = await User.find().populate({
@@ -80,12 +79,12 @@ async function login(req, res) {
     // Extract permissions from user_type
     const permissions = userType
       ? {
-        lead: userType.lead,
-        user: userType.user,
-        student: userType.student,
-        branch: userType.branch,
-        course: userType.course,
-      }
+          lead: userType.lead,
+          user: userType.user,
+          student: userType.student,
+          branch: userType.branch,
+          course: userType.course,
+        }
       : {};
 
     // Create JWT token with user information and permissions
@@ -99,7 +98,15 @@ async function login(req, res) {
     req.user = jwt.decode(token);
 
     // Return the token along with success message and user data
-    res.status(200).json({ message: "Login successful", token, _id, userName, userType, permissions});
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      _id,
+      userName,
+      userEmail,
+      userType,
+      permissions,
+    });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -174,14 +181,53 @@ async function updateUserById(req, res) {
   }
 }
 
+// update user by id username and password only. should request name, password, conform_password
+
+async function updateUserByIdUsernamePassword(req, res) {
+  try {
+    const { id } = req.params;
+    const { name, email, password } = req.body;
+
+    // check if the id is valid object id
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ error: "Invalid id" });
+    }
+
+    // Hash the password before updating
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user by ID
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        name,
+        email,
+        password: hashedPassword,
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ user: updatedUser, message: "User updated!" });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 //get users by user type
 async function getUsersByUserType(req, res) {
   const { user_type } = req.params;
 
-  const user_type_document = await User_type.find({ name: user_type.toLowerCase() });
+  const user_type_document = await User_type.find({
+    name: user_type.toLowerCase(),
+  });
 
   if (!user_type_document) {
-    res.status(400).json({ error: `user_type not found: ${user_type}` })
+    res.status(400).json({ error: `user_type not found: ${user_type}` });
   }
 
   if (user_type_document[0]._id != null) {
@@ -190,19 +236,20 @@ async function getUsersByUserType(req, res) {
       res.status(200).json(users);
     } catch (error) {
       console.error("Error fetching users by user_type", error);
-      res.status(500).json({ error: "Internal Server Error", message: "Error fetching users by user_type" });
+      res.status(500).json({
+        error: "Internal Server Error",
+        message: "Error fetching users by user_type",
+      });
     }
   }
-
 }
 
 //get counsellors
 async function getCounsellors(req, res) {
-
-  const user_type_document = await User_type.find({ name: 'counselor' });
+  const user_type_document = await User_type.find({ name: "counselor" });
 
   if (!user_type_document) {
-    res.status(400).json({ error: `user_type not found: counselor` })
+    res.status(400).json({ error: `user_type not found: counselor` });
   }
 
   if (user_type_document[0]._id != null) {
@@ -210,22 +257,23 @@ async function getCounsellors(req, res) {
       const users = await User.find({ user_type: user_type_document[0]._id });
       const counsellorDetails = [];
 
-      for(const counsellor of users){
+      for (const counsellor of users) {
         const counsellorDetail = {
           id: counsellor._id,
-          label: counsellor.name
+          label: counsellor.name,
         };
-        counsellorDetails.push(counsellorDetail)
-
+        counsellorDetails.push(counsellorDetail);
       }
 
       res.status(200).json(counsellorDetails);
     } catch (error) {
       console.error("Error fetching counsellors", error);
-      res.status(500).json({ error: "Internal Server Error", message: "Error fetching users by user_type" });
+      res.status(500).json({
+        error: "Internal Server Error",
+        message: "Error fetching users by user_type",
+      });
     }
   }
-
 }
 
 // handle user enable and disable with status field
@@ -268,4 +316,5 @@ module.exports = {
   getUsersByUserType,
   handleEnableDisable,
   getCounsellors,
+  updateUserByIdUsernamePassword,
 };

@@ -31,6 +31,7 @@ import User1 from 'assets/images/users/user-round.svg';
 
 // assets
 import { IconLogout,  IconSettings } from '@tabler/icons';
+import { useLogout } from '../../../../hooks/useLogout';
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -43,12 +44,23 @@ const ProfileSection = () => {
   // const [notification, setNotification] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
+  const { logout } = useLogout();
   /**
    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
    * */
   const anchorRef = useRef(null);
-  const handleLogout = async () => {
-    console.log('Logout');
+  const handleLogout = async (event) => {
+    event.preventDefault(); // Prevent default behavior of the anchor tag or button
+    
+    try {
+      logout(); // Assuming your logout function returns a Promise, make sure it's an async function
+  
+      // Other actions after successful logout, e.g., navigating to login page
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Handle error, e.g., show an error message to the user
+    }
   };
 
   const handleClose = (event) => {

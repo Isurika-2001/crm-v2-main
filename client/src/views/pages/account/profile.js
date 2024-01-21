@@ -7,45 +7,44 @@ import { useTheme } from '@mui/material/styles';
 import { AccountCircle } from '@mui/icons-material';
 import LockIcon from '@mui/icons-material/Lock';
 import EmailIcon from '@mui/icons-material/Email';
+import { useAuthContext } from '../../../context/useAuthContext';
 // import MergeTypeIcon from '@mui/icons-material/MergeType';
 import { useEffect } from 'react';
+import config from '../../../config';
 
 export default function UserForm() {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-  // const [userTypes, setUserTypes] = useState([]);
-  // const [selectedUserType, setSelectedUserType] = useState('');
-
-  const fetchData = async () => {
-    try {
-      const res = await fetch(`https://localhost:8080/api/user_types`);
-      const data = await res.json();
-      setUserTypes(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { user } = useAuthContext();
+  const [formData, setFormData] = React.useState({});
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (user) {
+      const data = {
+        name: user?.userName,
+        email: user?.userEmail
+      };
+      setFormData(data);
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Selected User Type:', selectedUserType);
 
     // Gather form data
     const formData = {
       name: e.target.name.value,
-      password: e.target.password.value,
       email: e.target.email.value,
-      user_type: selectedUserType
+      password: e.target.password.value,
+      conform_password: e.target.conform_password.value
     };
+
+    const id = user?._id;
 
     try {
       // Perform the form submission logic, e.g., send data to the server
-      const res = await fetch('https://localhost:8080/api/users/add-new', {
-        method: 'POST',
+      const res = await fetch(config.apiUrl + `api/updatePassword/${id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -71,11 +70,10 @@ export default function UserForm() {
                 </Typography>
                 <TextField
                   fullWidth
-                  // label="First Name"
                   margin="normal"
                   name="name"
                   type="text"
-                  defaultValue=""
+                  value={formData.name || ''}
                   sx={{ ...theme.typography.customInput }}
                   InputProps={{
                     startAdornment: (
@@ -92,11 +90,11 @@ export default function UserForm() {
                 </Typography>
                 <TextField
                   fullWidth
-                  // label="First Name"
+                  disabled
                   margin="normal"
                   name="email"
                   type="email"
-                  defaultValue=""
+                  value={formData.email || ''}
                   sx={{ ...theme.typography.customInput }}
                   InputProps={{
                     startAdornment: (
@@ -113,7 +111,6 @@ export default function UserForm() {
                 </Typography>
                 <TextField
                   fullWidth
-                  // label="First Name"
                   margin="normal"
                   name="password"
                   type="password"
@@ -131,7 +128,7 @@ export default function UserForm() {
 
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">
-                  Conform Password
+                  Confirm Password
                 </Typography>
                 <TextField
                   fullWidth
