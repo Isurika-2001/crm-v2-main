@@ -26,13 +26,13 @@ async function getStudent(req, res) {
   const { id } = req.params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.status(404).json({ error: "No such Student" })
+    res.status(404).json({ error: "No such Student" })
   }
 
   const student = await Student.findById({ _id: id })
 
   if (!student) {
-      res.status(400).json({ error: "No such Student" })
+    res.status(400).json({ error: "No such Student" })
   }
 
   res.status(200).json(student)
@@ -62,13 +62,10 @@ async function updateStudent(req, res) {
 }
 
 async function searchStudents(req, res) {
-  const { term } = req.query;
+  // const { term } = req.query;
 
   try {
-    const students = await Student.find({
-      // Use a regular expression to perform a case-insensitive search on the name field
-      name: { $regex: new RegExp(term, 'i') }
-    });
+    const students = await Student.find();
 
     const studentDetails = [];
 
@@ -86,7 +83,7 @@ async function searchStudents(req, res) {
           address: student.address,
           contact_no: student.contact_no,
           course: lead.course_id ? lead.course_id.name : null,
-          branch: lead.branch_id.name,
+          branch: lead.branch_id ? lead.branch_id.name : null,
           date: lead.date,
           scheduled_to: lead.scheduled_to
         }
@@ -105,7 +102,7 @@ async function searchStudents(req, res) {
     }
 
 
-
+    console.log(studentDetails)
     res.status(200).json(studentDetails);
   } catch (error) {
     console.error("Error searching students:", error);
@@ -113,10 +110,11 @@ async function searchStudents(req, res) {
   }
 }
 
+
 module.exports = {
   getStudents,
   addStudent,
   getStudent,
   updateStudent,
-  searchStudents  
+  searchStudents
 };
