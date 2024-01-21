@@ -9,6 +9,7 @@ const leadSchema = new mongoose.Schema({
     student_id: {type: mongoose.Schema.Types.ObjectId, ref: 'Student'},
     counsellor_id: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false},
     user_id: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    source_id: {type: mongoose.Schema.Types.ObjectId, ref: 'Source'}
 })
 
 const lead = mongoose.model('Lead', leadSchema)
