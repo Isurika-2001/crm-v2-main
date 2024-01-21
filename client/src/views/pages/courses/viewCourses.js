@@ -1,114 +1,135 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
-import { useMediaQuery,Typography, TextField, InputAdornment } from '@mui/material';
+import { useMediaQuery, Typography, TextField, InputAdornment } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import ModeIcon from '@mui/icons-material/Mode';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
+import { useEffect, useState } from 'react';
+import config from '../../../config';
+import { useNavigate } from 'react-router-dom';
 
 export default function ViewCourses() {
+  const [courseData, setCourseData] = useState([]);
+  // const [searchTerm, setSearchTerm] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
+  const navigate = useNavigate();
 
+  // Function to handle search
+  const handleSearch = (event) => {
+    const term = event.target.value.toLowerCase();
+    // setSearchTerm(term);
 
-    const theme = useTheme();
-    const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
+    // Filter the courseData based on the search term
+    const filteredCourses = courseData.filter((course) => course.name.toLowerCase().includes(term));
+    setFilteredData(filteredCourses);
+  };
 
-    const columns = [
-        { field: 'name', headerName: 'Course Name', width: 200, },
+  //fetch course details
 
-        { field: 'description', headerName: 'Course Description', width: 700 },
-        {
-            field: 'edit',
-            headerName: '',
-            description: 'This column has a value getter and is not sortable.',
-            sortable: false,
-            width: 200,
-            renderCell: () => (
-                <>
-                <Button variant="contained" href="#contained-buttons">
-                <ModeIcon style={{ color: "white" }} />
-                </Button>
-                    <DeleteIcon style={{ color: "black", margin: 20 }} />
-                    <IconButton color="secondary" aria-label="add an alarm">
-<ModeIcon style={{ color: "blue" }} />
-</IconButton>
-                </>
+  async function fetchCourseDetails() {
+    try {
+      const response = await fetch(config.apiUrl + 'api/courses');
+      const allCourses = await response.json();
 
+      // Filter courses where status is true
+      const filteredCourses = allCourses.filter((course) => course.status === true);
 
-            ),
-        },
+      // Apply transformation to each course in filteredCourses
+      const formattedData = filteredCourses.map((course) => ({ id: course._id, ...course }));
 
-    ];
+      setCourseData(formattedData);
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    }
+  }
 
-    const rows = [
-        { id: 1, name: 'John', description: 'Computer Science is the study of computers and computational systems. It involves understanding the theory, development, and application of software and systems, as well as the algorithms that enable them to function. Computer scientists explore various aspects of computing, ranging from hardware and software design to artificial intelligence and data analysis.' },
-        { id: 2, name: 'John', description: 'Computer Science is the study of computers and computational systems. It involves understanding the theory, development, and application of software and systems, as well as the algorithms that enable them to function. Computer scientists explore various aspects of computing, ranging from hardware and software design to artificial intelligence and data analysis.' },
-        { id: 3, name: 'John', description: 'Computer Science is the study of computers and computational systems. It involves understanding the theory, development, and application of software and systems, as well as the algorithms that enable them to function. Computer scientists explore various aspects of computing, ranging from hardware and software design to artificial intelligence and data analysis.' },
-        { id: 4, name: 'John', description: 'Computer Science is the study of computers and computational systems. It involves understanding the theory, development, and application of software and systems, as well as the algorithms that enable them to function. Computer scientists explore various aspects of computing, ranging from hardware and software design to artificial intelligence and data analysis.' },
-        { id: 5, name: 'John', description: 'Computer Science is the study of computers and computational systems. It involves understanding the theory, development, and application of software and systems, as well as the algorithms that enable them to function. Computer scientists explore various aspects of computing, ranging from hardware and software design to artificial intelligence and data analysis.' },
-        { id: 6, name: 'John', description: 'Computer Science is the study of computers and computational systems. It involves understanding the theory, development, and application of software and systems, as well as the algorithms that enable them to function. Computer scientists explore various aspects of computing, ranging from hardware and software design to artificial intelligence and data analysis.' },
-        { id: 7, name: 'John', description: 'Computer Science is the study of computers and computational systems. It involves understanding the theory, development, and application of software and systems, as well as the algorithms that enable them to function. Computer scientists explore various aspects of computing, ranging from hardware and software design to artificial intelligence and data analysis.' },
-        { id: 8, name: 'John', description: 'Computer Science is the study of computers and computational systems. It involves understanding the theory, development, and application of software and systems, as well as the algorithms that enable them to function. Computer scientists explore various aspects of computing, ranging from hardware and software design to artificial intelligence and data analysis.' },
-        { id: 9, name: 'John', description: 'Computer Science is the study of computers and computational systems. It involves understanding the theory, development, and application of software and systems, as well as the algorithms that enable them to function. Computer scientists explore various aspects of computing, ranging from hardware and software design to artificial intelligence and data analysis.' },
-    ];
+  useEffect(() => {
+    fetchCourseDetails();
+  }, []);
 
-    return (
+  console.log(courseData);
+
+  const theme = useTheme();
+  const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
+
+  const columns = [
+    { field: 'name', headerName: 'Course Name', width: 200 },
+
+    { field: 'description', headerName: 'Course Description', width: 1200 },
+    {
+      field: 'edit',
+      headerName: '',
+      description: 'This column has a value getter and is not sortable.',
+      sortable: false,
+      width: 200,
+      renderCell: (params) => (
         <>
-            <MainCard title="View Courses">
-                <Grid container direction="column" justifyContent="center" >
-
-                    <Grid container sx={{ p: 3 }}
-                        spacing={matchDownSM ? 0 : 2}
-                    >
-
-                        <Grid item xs={8} sm={5} >
-                            <Typography variant="h5" component="h5">
-                                Search
-                            </Typography>
-                            <TextField
-                                fullWidth
-                                // label="First Name"
-                                margin="normal"
-                                name="course"
-                                type="text"
-                                SelectProps={{ native: true }}
-                                defaultValue=""
-                                sx={{ ...theme.typography.customInput }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={12} >
-                            <div style={{ height: 400, width: '100%' }}>
-                                <DataGrid
-                                    rows={rows}
-                                    columns={columns}
-                                    initialState={{
-                                        pagination: {
-                                            paginationModel: { page: 0, pageSize: 5 },
-                                        },
-                                    }}
-                                    pageSizeOptions={[5, 10]}
-                                    checkboxSelection
-                                />
-                            </div>
-                        </Grid>
-
-
-                    </Grid>
-
-                </Grid>
-            </MainCard>
-
-
+          <ModeIcon
+            onClick={() => {
+              updateCourse(params.row._id);
+            }}
+            style={{ color: 'black' }}
+          />
+          <DeleteIcon style={{ color: 'black', margin: 20 }} />
         </>
-    );
+      )
+    }
+  ];
+
+  function updateCourse(courseId) {
+    console.log('clicked user id', courseId);
+    navigate('/app/courses/add?id=' + courseId);
+  }
+
+  return (
+    <>
+      <MainCard title="View Courses">
+        <Grid container direction="column" justifyContent="center">
+          <Grid container sx={{ p: 3 }} spacing={matchDownSM ? 0 : 2}>
+            <Grid item xs={8} sm={5}>
+              <Typography variant="h5" component="h5">
+                Search
+              </Typography>
+              <TextField
+                fullWidth
+                // label="First Name"
+                margin="normal"
+                name="course"
+                type="text"
+                SelectProps={{ native: true }}
+                defaultValue=""
+                sx={{ ...theme.typography.customInput }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  )
+                }}
+                onChange={handleSearch} // Call handleSearch on input change
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <div style={{ height: 400, width: '100%' }}>
+                <DataGrid
+                  rows={filteredData.length > 0 ? filteredData : courseData} // Use filteredData if available, else use courseData
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 5 }
+                    }
+                  }}
+                  pageSizeOptions={[5, 10]}
+                  checkboxSelection
+                />
+              </div>
+            </Grid>
+          </Grid>
+        </Grid>
+      </MainCard>
+    </>
+  );
 }
