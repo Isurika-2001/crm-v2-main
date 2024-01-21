@@ -7,7 +7,7 @@ import { Button, CardActions, CardContent, Grid, Typography, ListItem, ListItemT
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonPopularCard from 'ui-component/cards/Skeleton/PopularCard';
 import { gridSpacing } from 'store/constant';
-import config from '../../../config';
+// import config from '../../../config';
 
 // assets
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
