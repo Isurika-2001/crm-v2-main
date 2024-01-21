@@ -18,6 +18,8 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../../context/useAuthContext';
+import IconButton from '@mui/material/IconButton';
+import LinearProgress from '@mui/material/LinearProgress';
 import config from '../../../config';
 
 export default function ViewLeads() {
@@ -35,21 +37,21 @@ export default function ViewLeads() {
   };
   const [courses, setCourses] = useState([]);
   const [source, setSources] = useState([]);
+  const [allLeads, setAllLeads] = useState([]);
 
-  // const top100Films = [
 
-  //     { label: 'The Godfather', year: 1952 },
-  //     { label: 'The Godfather', year: 1952 },
-  //     { label: 'The Godfather', year: 1952 },
-  //     { label: 'The Godfather', year: 1952 },
-  //     { label: 'The Godfather', year: 1952 }
+  const [selectedCourse, setselectedCourse] = useState('');
+  const [selectedSource, setselectedSource] = useState('');
+  const [dataeFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [sname, setSname] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // ];
   const [counselors, setCounselors] = useState([]);
 
   const columns = [
     { field: 'name', headerName: 'Student Name', width: 200 },
-    { field: 'source', headerName: 'Source', width: 150, renderCell: (params) => iconComponentMap[params.row.icon] },
+    { field: 'source', headerName: 'Source', width: 150, renderCell: (params) => iconComponentMap[params.row.source] },
     { field: 'status', headerName: 'Status', width: 150 },
     { field: 'scheduled_to', headerName: 'Scheduled To', width: 200 },
     {
@@ -69,7 +71,7 @@ export default function ViewLeads() {
       headerName: 'Assign To',
       description: 'This column has a value getter and is not sortable.',
       sortable: false,
-      width: 300,
+      width: 250,
       renderCell: (params) => (
         <>
           <Autocomplete
@@ -120,16 +122,15 @@ export default function ViewLeads() {
       headerName: '',
       description: 'This column has a value getter and is not sortable.',
       sortable: false,
-      width: 200,
+      width: 150,
       renderCell: (params) => (
         <>
-          <ModeIcon
-            onClick={() => {
-              updateLead(params.row.id);
-            }}
-            style={{ color: 'black' }}
-          />
-          <DeleteIcon style={{ color: 'black', margin: 20 }} />
+          <IconButton onClick={() => { updateLead(params.row.id) }} style={{ backgroundColor: 'white' }}>
+            <ModeIcon style={{ color: "gray" }} />
+          </IconButton>
+          <IconButton style={{ margin: 10, backgroundColor: 'white' }}>
+            <DeleteIcon style={{ color: "gray" }} />
+          </IconButton>
         </>
       )
     }
@@ -139,18 +140,6 @@ export default function ViewLeads() {
     console.log('clicked lead id', leadId);
     navigate('/app/leads/add?id=' + leadId);
   }
-
-  // const rows = [
-  //     { id: 1, icon: 'facebook', name: 'John', status: 'Snow', scheduled_to: '2023-12-22', course: 'Computer Science', branch: 'Colombo', counsellor: 'Doe' },
-  //     { id: 2, icon: 'manual', name: 'John', status: 'Snow', scheduled_to: '2023-12-22', course: 'Computer Science', branch: 'Colombo', counsellor: 'Doe' },
-  //     { id: 3, icon: 'internal', name: 'John', status: 'Snow', scheduled_to: '2023-12-22', course: 'Computer Science', branch: 'Colombo', counsellor: 'Doe' },
-  //     { id: 4, icon: 'facebook', name: 'John', status: 'Snow', scheduled_to: '2023-12-22', course: 'Computer Science', branch: 'Colombo', counsellor: 'Doe' },
-  //     { id: 5, icon: 'manual', name: 'John', status: 'Snow', scheduled_to: '2023-12-22', course: 'Computer Science', branch: 'Colombo', counsellor: 'Doe' },
-  //     { id: 6, icon: 'internal', name: 'John', status: 'Snow', scheduled_to: '2023-12-22', course: 'Computer Science', branch: 'Colombo', counsellor: 'Doe' },
-  //     { id: 7, icon: 'facebook', name: 'John', status: 'Snow', scheduled_to: '2023-12-22', course: 'Computer Science', branch: 'Colombo', counsellor: 'Doe' },
-  //     { id: 8, icon: 'manual', name: 'John', status: 'Snow', scheduled_to: '2023-12-22', course: 'Computer Science', branch: 'Colombo', counsellor: 'Doe' },
-  //     { id: 9, icon: 'internal', name: 'John', status: 'Snow', scheduled_to: '2023-12-22', course: 'Computer Science', branch: 'Colombo', counsellor: 'Doe' },
-  // ];
 
   useEffect(() => {
     async function fetchLeads() {
@@ -169,15 +158,21 @@ export default function ViewLeads() {
         // Filter leads based on the counselor ID from the backend response
         if (permissions?.lead?.includes('read-all')) {
           setData(leads);
+          setAllLeads(leads)
+          setLoading(false);
           return;
         } else if (permissions?.lead?.includes('read') && userType?.name === 'counselor') {
           const filteredLeads = leads.filter((lead) => lead.counsellor_id === user._id);
           setData(filteredLeads);
+          setAllLeads(leads)
+          setLoading(false);
           console.log(filteredLeads); // Log the filtered leads
           return;
         } else if (permissions?.lead?.includes('read') && userType?.name === 'user') {
           const filteredLeads = leads.filter((lead) => lead.user_id === user._id);
           setData(filteredLeads);
+          setAllLeads(leads)
+          setLoading(false);
           console.log(filteredLeads);
           return;
         }
@@ -227,11 +222,44 @@ export default function ViewLeads() {
     getCounselors();
   }, []);
 
+  const sortDateFrom = (datefrom) => {
+    const sortedLeads = allLeads.filter((lead) => lead.date >= datefrom);
+    setData(sortedLeads);
+    console.log(sortedLeads)
+  }
+
+  const sortDateTo = (dateto) => {
+    const sortedLeads = allLeads.filter((lead) => lead.date <= dateto);
+    setData(sortedLeads);
+    console.log(sortedLeads)
+  }
+
+  const sortSources = (source) => {
+    const sortedLeads = allLeads.filter((lead) => lead.source === source);
+    setData(sortedLeads);
+    console.log(sortedLeads)
+  }
+
+  const sortName = (name) => {
+    const sortedLeads = allLeads.filter((lead) => lead.name.toLowerCase().includes(name.toLowerCase()));
+    setData(sortedLeads);
+    console.log(sortedLeads)
+  }
+
+  const sortCourses = (course) => {
+    const sortedLeads = allLeads.filter((lead) => lead.course === course);
+    setData(sortedLeads);
+    console.log(sortedLeads)
+  }
+
   const [data, setData] = useState([]);
 
   return (
     <>
       <MainCard title="View Leads">
+        {loading && (
+          <LinearProgress />
+        )}
         <Grid container direction="column" justifyContent="center">
           <Grid container sx={{ p: 3 }} spacing={matchDownSM ? 0 : 2}>
             <Grid container direction="column">
@@ -247,7 +275,11 @@ export default function ViewLeads() {
                     name="course"
                     type="text"
                     SelectProps={{ native: true }}
-                    defaultValue=""
+                    value={sname}
+                    onChange={(event) => {
+                      setSname(event.target.value)
+                      sortName(event.target.value)
+                    }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -269,6 +301,12 @@ export default function ViewLeads() {
                     name="course"
                     select
                     SelectProps={{ native: true }}
+                    value={selectedCourse}
+                    onChange={(event) => {
+                      setselectedCourse(event.target.value);
+                      console.log(event.target.value);
+                      sortCourses(event.target.value);
+                    }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -277,6 +315,9 @@ export default function ViewLeads() {
                       )
                     }}
                   >
+                    <option value="" disabled >
+                      Select Course
+                    </option>
                     {courses && courses.length > 0 ? (
                       courses.map((option) => (
                         <option key={option._id} value={option.name}>
@@ -292,7 +333,7 @@ export default function ViewLeads() {
                 </Grid>
                 <Grid item xs={8} sm={3}>
                   <Typography variant="h5" component="h5">
-                    Media
+                    Source
                   </Typography>
                   <TextField
                     fullWidth
@@ -301,7 +342,11 @@ export default function ViewLeads() {
                     name="media"
                     select
                     SelectProps={{ native: true }}
-                    defaultValue=""
+                    value={selectedSource}
+                    onChange={(event) => {
+                      setselectedSource(event.target.value);
+                      sortSources(event.target.value);
+                    }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -310,6 +355,9 @@ export default function ViewLeads() {
                       )
                     }}
                   >
+                    <option value="" disabled >
+                      Select Source
+                    </option>
                     {source && source.length > 0 ? (
                       source.map((option) => (
                         <option key={option._id} value={option.name}>
@@ -333,7 +381,11 @@ export default function ViewLeads() {
                     margin="normal"
                     name="date"
                     type="date"
-                    defaultValue=""
+                    value={dataeFrom}
+                    onChange={(event) => {
+                      setDateFrom(event.target.value)
+                      sortDateFrom(event.target.value)
+                    }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -353,7 +405,11 @@ export default function ViewLeads() {
                     margin="normal"
                     name="date"
                     type="date"
-                    defaultValue=""
+                    value={dateTo}
+                    onChange={(event) => {
+                      setDateTo(event.target.value)
+                      sortDateTo(event.target.value)
+                    }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
