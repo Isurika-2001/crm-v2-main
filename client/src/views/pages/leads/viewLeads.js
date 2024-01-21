@@ -17,8 +17,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import { useAuthContext } from '../../../context/useAuthContext';
 
 export default function ViewLeads() {
+  // const { user } = useAuthContext();
+  // const { permissions } = user || {};
+
   const navigate = useNavigate();
   // const { id } = useParams();
   const theme = useTheme();

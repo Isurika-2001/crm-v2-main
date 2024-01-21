@@ -26,28 +26,38 @@ export default function ThemeRoutes() {
       <Route path="app" element={user ? <MainLayout /> : <Navigate to="/" />}>
         <Route path="access-denied" element={<AccessDeniedPage />} />
         <Route path="dashboard" element={<ViewDashboard />} />
-        <Route path="leads" element={<Outlet />}>
-          <Route index element={<ViewLead />} />
-          {/* Conditionally render AddLead component based on create permission */}
-          <Route path="add" element={permissions.lead.includes('update') ? <AddLead /> : <Navigate to="/app/access-denied" replace />} />
 
-          {/* Conditionally render AddLead component (for editing) based on update permission */}
+        {/* Leads Section */}
+        <Route path="leads" element={<Outlet />}>
+          <Route index element={permissions?.lead?.includes('read') ? <ViewLead /> : <Navigate to="/app/access-denied" replace />} />
+          <Route path="add" element={permissions?.lead?.includes('create') ? <AddLead /> : <Navigate to="/app/access-denied" replace />} />
           <Route
             path="add/:id"
-            element={permissions.lead.includes('update') ? <AddLead /> : <Navigate to="/app/access-denied" replace />}
+            element={permissions?.lead?.includes('create') ? <AddLead /> : <Navigate to="/app/access-denied" replace />}
           />
         </Route>
 
+        {/* Courses Section */}
         <Route path="courses" element={<Outlet />}>
-          <Route index element={<ViewCourses />} />
-          <Route path="add" element={<AddCourse />} />
-          <Route path="add/:id" element={<AddCourse />} />
+          <Route index element={permissions?.course?.includes('read') ? <ViewCourses /> : <Navigate to="/app/access-denied" replace />} />
+          <Route
+            path="add"
+            element={permissions?.course?.includes('create') ? <AddCourse /> : <Navigate to="/app/access-denied" replace />}
+          />
+          <Route
+            path="add/:id"
+            element={permissions?.course?.includes('create') ? <AddCourse /> : <Navigate to="/app/access-denied" replace />}
+          />
         </Route>
 
+        {/* Users Section */}
         <Route path="users" element={<Outlet />}>
-          <Route index element={<ViewUsers />} />
-          <Route path="add" element={<AddUser />} />
-          <Route path="add/:id" element={<AddUser />} />
+          <Route index element={permissions?.user?.includes('read') ? <ViewUsers /> : <Navigate to="/app/access-denied" replace />} />
+          <Route path="add" element={permissions?.user?.includes('create') ? <AddUser /> : <Navigate to="/app/access-denied" replace />} />
+          <Route
+            path="add/:id"
+            element={permissions?.user?.includes('create') ? <AddUser /> : <Navigate to="/app/access-denied" replace />}
+          />
         </Route>
       </Route>
     </Routes>
