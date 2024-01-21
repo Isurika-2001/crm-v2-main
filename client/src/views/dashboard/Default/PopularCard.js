@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 
 // material-ui
 import { Button, CardActions, CardContent, Grid, Typography, ListItem, ListItemText } from '@mui/material';
@@ -10,12 +11,22 @@ import { gridSpacing } from 'store/constant';
 // import config from '../../../config';
 
 // assets
-import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
+// import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import EarningIcon from 'assets/images/icons/courses.svg';
 
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
 const PopularCard = ({ isLoading, products }) => {
+  const itemsPerPage = 4;
+  const [currentPage, setCurrentPage] = React.useState(1);
+
+  // Calculate the start and end index of the products for the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  // Display only the products for the current page
+  const displayedProducts = isLoading ? [] : products.slice(startIndex, endIndex);
+
   return (
     <>
       {isLoading ? (
@@ -37,9 +48,8 @@ const PopularCard = ({ isLoading, products }) => {
               </Grid>
               <Grid item xs={12}>
                 <Grid container direction="column">
-                  {products.map((product, index) => {
-                    const hasDivider = index < products.length - 1;
-                    // const ago = formatDistanceToNow(product.updatedAt);
+                  {displayedProducts.map((product, index) => {
+                    const hasDivider = index < displayedProducts.length - 1;
 
                     return (
                       <ListItem divider={hasDivider} key={product.id}>
@@ -57,9 +67,16 @@ const PopularCard = ({ isLoading, products }) => {
             </Grid>
           </CardContent>
           <CardActions sx={{ p: 1.25, pt: 0, justifyContent: 'center' }}>
-            <Button size="small" disableElevation>
-              View All
-              <ChevronRightOutlinedIcon />
+            <Button size="small" disableElevation onClick={() => setCurrentPage((prevPage) => prevPage - 1)} disabled={currentPage === 1}>
+              Previous
+            </Button>
+            <Button
+              size="small"
+              disableElevation
+              onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+              disabled={endIndex >= products.length}
+            >
+              Next
             </Button>
           </CardActions>
         </MainCard>

@@ -57,7 +57,6 @@ const TotalGrowthBarChart = ({ isLoading }) => {
 
       // Set the leads count and update state
       setLeadsCountByMonth(leadsCountByMonth);
-      setIsTrue(true);
     } catch (error) {
       console.error('Error fetching data:', error.message);
     }

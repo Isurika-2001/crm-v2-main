@@ -14,6 +14,7 @@ const ViewCourses = Loadable(lazy(() => import('views/pages/courses/viewCourses'
 const AddUser = Loadable(lazy(() => import('views/pages/users/userForm')));
 const ViewUsers = Loadable(lazy(() => import('views/pages/users/viewUsers')));
 const AccessDeniedPage = Loadable(lazy(() => import('views/pages/access-denied-page/access-denied')));
+const UserForm = Loadable(lazy(() => import('views/pages/account/profile')));
 
 export default function ThemeRoutes() {
   const { user } = useAuthContext();
@@ -26,6 +27,7 @@ export default function ThemeRoutes() {
       <Route path="app" element={user ? <MainLayout /> : <Navigate to="/" />}>
         <Route path="access-denied" element={<AccessDeniedPage />} />
         <Route path="dashboard" element={<ViewDashboard />} />
+        <Route path="profile" element={<UserForm />} />
 
         {/* Leads Section */}
         <Route path="leads" element={<Outlet />}>
