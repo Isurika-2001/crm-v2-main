@@ -1,15 +1,15 @@
 // assets
 import { IconKey } from '@tabler/icons';
-import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import GroupIcon from '@mui/icons-material/Group';
+import AutoAwesomeMosaicOutlinedIcon from '@mui/icons-material/AutoAwesomeMosaicOutlined';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 
 // constant
 const icons = {
   IconKey,
-  AutoAwesomeMosaicIcon,
-  AssignmentIcon,
-  GroupIcon
+  AutoAwesomeMosaicOutlinedIcon,
+  AssignmentOutlinedIcon,
+  GroupOutlinedIcon
 };
 
 // ==============================|| EXTRA PAGES MENU ITEMS ||============================== //
@@ -47,7 +47,7 @@ const pages = {
       id: 'leads',
       title: 'Leads',
       type: 'collapse',
-      icon: icons.AutoAwesomeMosaicIcon,
+      icon: icons.AutoAwesomeMosaicOutlinedIcon,
       children: [
         {
           id: 'material-icons',
@@ -70,7 +70,7 @@ const pages = {
       id: 'courses',
       title: 'Courses',
       type: 'collapse',
-      icon: icons.AssignmentIcon,
+      icon: icons.AssignmentOutlinedIcon,
       children: [
         {
           id: 'material-icons',
@@ -93,7 +93,7 @@ const pages = {
       id: 'users',
       title: 'Users',
       type: 'collapse',
-      icon: icons.GroupIcon,
+      icon: icons.GroupOutlinedIcon,
       children: [
         {
           id: 'material-icons',
