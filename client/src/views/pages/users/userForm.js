@@ -108,7 +108,6 @@ export default function UserForm() {
                       name="name"
                       type="text"
                       defaultValue={userData.name || ''}
-                      sx={{ ...theme.typography.customInput }}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -130,7 +129,6 @@ export default function UserForm() {
                       type="password"
                       disabled={userId ? true : false}
                       defaultValue={userData.password || ''}
-                      sx={{ ...theme.typography.customInput }}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -152,7 +150,6 @@ export default function UserForm() {
                       type="email"
                       disabled={userId ? true : false}
                       defaultValue={userData.email || ''}
-                      sx={{ ...theme.typography.customInput }}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -174,7 +171,6 @@ export default function UserForm() {
                       select
                       value={selectedUserType}
                       onChange={(e) => setSelectedUserType(e.target.value)}
-                      sx={{ ...theme.typography.customInput }}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
