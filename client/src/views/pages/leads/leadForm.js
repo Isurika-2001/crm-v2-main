@@ -20,6 +20,7 @@ import { useCallback } from 'react';
 import { Box } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
+import LeadfollowUp from '../leads/leadFollowUp';
 import config from '../../../config';
 // import { useParams } from 'react-router-dom';
 
@@ -195,7 +196,7 @@ export default function LeadForm() {
           //check duplicate lead
           const chceckDuplicate = await fetch(
             config.apiUrl +
-              `api/checkLead?courseName=${values.course}&branchName=${values.branch}&studentName=${values.name}&contactNo=${values.contact_no}`
+            `api/checkLead?courseName=${values.course}&branchName=${values.branch}&studentName=${values.name}&contactNo=${values.contact_no}`
           );
           if (!chceckDuplicate.ok) {
             console.error('Error checking duplicates', studentResponse.statusText);
@@ -751,6 +752,11 @@ export default function LeadForm() {
               )}
             </CardActions>
           </Grid>
+
+          {leadId ? (<>
+            <LeadfollowUp selectedLeadId={leadId} />
+          </>) : (<></>)}
+
         </MainCard>
       </form>
     </>
