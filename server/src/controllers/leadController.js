@@ -122,6 +122,7 @@ async function getLeadsSummaryDetails(req, res) {
       .populate("course_id", "name")
       .populate("branch_id", "name")
       .populate("counsellor_id", "name")
+      .populate("source_id", "name")
       .exec();
 
     const leadsDetails = [];
@@ -143,6 +144,7 @@ async function getLeadsSummaryDetails(req, res) {
         contact_no: lead.student_id.contact_no,
         course: lead.course_id.name,
         branch: lead.branch_id.name,
+        source: lead.source_id ? lead.source_id.name : null,
         counsellor: lead.counsellor_id ? lead.counsellor_id.name : null,
         counsellor_id: lead.counsellor_id ? lead.counsellor_id._id : null,
         user_id: lead.user_id? lead.user_id : null,
