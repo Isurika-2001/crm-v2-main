@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useAuthContext } from '../../../../context/useAuthContext';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -30,7 +31,7 @@ import Transitions from 'ui-component/extended/Transitions';
 import User1 from 'assets/images/users/user-round.svg';
 
 // assets
-import { IconLogout,  IconSettings } from '@tabler/icons';
+import { IconLogout, IconSettings } from '@tabler/icons';
 import { useLogout } from '../../../../hooks/useLogout';
 
 // ==============================|| PROFILE MENU ||============================== //
@@ -39,11 +40,14 @@ const ProfileSection = () => {
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
   const navigate = useNavigate();
+  const { user } = useAuthContext();
 
   // const [sdm, setSdm] = useState(true);
   // const [notification, setNotification] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
+  const [userTypeName, setUserTypeName] = useState(null);
   const { logout } = useLogout();
   /**
    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
@@ -51,10 +55,10 @@ const ProfileSection = () => {
   const anchorRef = useRef(null);
   const handleLogout = async (event) => {
     event.preventDefault(); // Prevent default behavior of the anchor tag or button
-    
+
     try {
       logout(); // Assuming your logout function returns a Promise, make sure it's an async function
-  
+
       // Other actions after successful logout, e.g., navigating to login page
       navigate('/');
     } catch (error) {
@@ -69,6 +73,25 @@ const ProfileSection = () => {
     }
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (user) {
+      setUserDetails(user);
+      if (user.userType?.name === 'sup_admin') {
+        setUserTypeName('Super Admin');
+      } else if (user.userType?.name === 'admin') {
+        setUserTypeName('Admin');
+      } else if (user.userType?.name === 'user') {
+        setUserTypeName('User');
+      } else if (user.userType?.name === 'gen_supervisor') {
+        setUserTypeName('General Supervisor');
+      } else if (user.userType?.name === 'supervisor') {
+        setUserTypeName('Supervisor');
+      } else if (user.userType?.name === 'counsellor') {
+        setUserTypeName('Counsellor');
+      }
+    }
+  }, [user]);
 
   const handleListItemClick = (event, index, route = '') => {
     setSelectedIndex(index);
@@ -161,12 +184,11 @@ const ProfileSection = () => {
                   <Box sx={{ p: 2 }}>
                     <Stack>
                       <Stack direction="row" spacing={0.5} alignItems="center">
-                        <Typography variant="h4">Good Morning,</Typography>
                         <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                          Johne Doe
+                          {user && userDetails.userName}
                         </Typography>
                       </Stack>
-                      <Typography variant="subtitle2">Project Admin</Typography>
+                      <Typography variant="subtitle2">{userTypeName ? userTypeName : ``}</Typography>
                     </Stack>
                   </Box>
                   <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
