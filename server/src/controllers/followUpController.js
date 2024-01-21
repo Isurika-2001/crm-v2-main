@@ -85,12 +85,39 @@ async function getFollowUp(req, res) {
 
 }
 
+function formatDate(inputDate) {
+    const date = new Date(inputDate);
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    const formattedD = `${year}-${month}-${day}`;
+    return formattedD;
+}
+
 async function getFollowUpsByLead(req, res) {
     const { lead_id } = req.params;
 
     try {
-        const followUps = await FollowUp.find({ lead_id });
-        res.status(200).json(followUps);
+        const followUps = await FollowUp.find({ lead_id })
+            .sort({ date: -1 })
+            .exec();
+
+        const followUpDetails = [];
+
+        for (const follwoup of followUps) {
+            const user = await User.findOne({ _id: follwoup.user_id })
+            const status = await Status.findOne({ _id: follwoup.status_id })
+            const followupDetail = {
+                comment: follwoup.comment,
+                date: formatDate(follwoup.date),
+                status: status ? status.name : null,
+                user: user ? user.name : null
+            };
+
+            followUpDetails.push(followupDetail)
+        }
+        res.status(200).json(followUpDetails);
+
     } catch (error) {
         console.log("Error fetching follow-ups by lead_id", error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -129,16 +156,16 @@ async function getFollowUpDate(req, res) {
 
         // Counting the number of items with name
         const ringNoAnswerCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Ring no answer").length;
-        const registeredCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Registered").length;
+        const registeredCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Registered").length;
         const emailCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Sent Email").length;
-        const whatsappCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Whatsapp & sms").length;
+        const whatsappCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Whatsapp & sms").length;
         const meetingCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Schedule meetings").length;
-        const cousedetailsCount = Object.values(filteredFollowUp).filter(item =>item.status_id.name  === "Couse details sent").length;
-        const nextintakeCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Next intake").length;
-        const droppedCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Dropped").length;
-        const fakeCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Fake").length;
-        const duplicateCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Duplicate").length;
-        const NewCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "New").length;
+        const cousedetailsCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Couse details sent").length;
+        const nextintakeCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Next intake").length;
+        const droppedCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Dropped").length;
+        const fakeCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Fake").length;
+        const duplicateCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Duplicate").length;
+        const NewCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "New").length;
 
         const resultCount = {
             ringNoAnswerCount: ringNoAnswerCount,
@@ -152,12 +179,12 @@ async function getFollowUpDate(req, res) {
             fakeCount: fakeCount,
             duplicateCount: duplicateCount,
             NewCount: NewCount,
-          };
+        };
 
         // console.log(resultCount);
 
         res.status(200).json(resultCount);
-        
+
     } catch (error) {
         console.log("Error fetching follow_up", error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -196,16 +223,16 @@ async function getFollowUpDateByUser(req, res) {
 
         // Counting the number of items with name
         const ringNoAnswerCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Ring no answer").length;
-        const registeredCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Registered").length;
+        const registeredCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Registered").length;
         const emailCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Sent Email").length;
-        const whatsappCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Whatsapp & sms").length;
+        const whatsappCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Whatsapp & sms").length;
         const meetingCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Schedule meetings").length;
-        const cousedetailsCount = Object.values(filteredFollowUp).filter(item =>item.status_id.name  === "Couse details sent").length;
-        const nextintakeCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Next intake").length;
-        const droppedCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Dropped").length;
-        const fakeCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Fake").length;
-        const duplicateCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "Duplicate").length;
-        const NewCount = Object.values(filteredFollowUp).filter(item => item.status_id.name  === "New").length;
+        const cousedetailsCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Couse details sent").length;
+        const nextintakeCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Next intake").length;
+        const droppedCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Dropped").length;
+        const fakeCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Fake").length;
+        const duplicateCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "Duplicate").length;
+        const NewCount = Object.values(filteredFollowUp).filter(item => item.status_id.name === "New").length;
 
         const resultCount = {
             ringNoAnswerCount: ringNoAnswerCount,
