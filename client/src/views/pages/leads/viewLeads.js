@@ -4,6 +4,10 @@ import MainCard from 'ui-component/cards/MainCard';
 import { InputAdornment, TextField, useMediaQuery, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
+import {
+  GridToolbarContainer,
+  GridToolbarExport,
+} from '@mui/x-data-grid-premium';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import MonitorIcon from '@mui/icons-material/Monitor';
@@ -21,6 +25,16 @@ import { useAuthContext } from '../../../context/useAuthContext';
 import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
 import config from '../../../config';
+
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport />
+    </GridToolbarContainer>
+  );
+
+}
 
 export default function ViewLeads() {
   const { user } = useAuthContext();
@@ -164,14 +178,14 @@ export default function ViewLeads() {
         } else if (permissions?.lead?.includes('read') && userType?.name === 'counselor') {
           const filteredLeads = leads.filter((lead) => lead.counsellor_id === user._id);
           setData(filteredLeads);
-          setAllLeads(leads)
+          setAllLeads(filteredLeads)
           setLoading(false);
           console.log(filteredLeads); // Log the filtered leads
           return;
         } else if (permissions?.lead?.includes('read') && userType?.name === 'user') {
           const filteredLeads = leads.filter((lead) => lead.user_id === user._id);
           setData(filteredLeads);
-          setAllLeads(leads)
+          setAllLeads(filteredLeads)
           setLoading(false);
           console.log(filteredLeads);
           return;
@@ -431,6 +445,9 @@ export default function ViewLeads() {
                     pagination: {
                       paginationModel: { page: 0, pageSize: 5 }
                     }
+                  }}
+                  slots={{
+                    toolbar: CustomToolbar,
                   }}
                   pageSizeOptions={[5, 10]}
                   checkboxSelection
