@@ -9,6 +9,7 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import config from '../../../config';
+import CodeIcon from '@mui/icons-material/Code';
 
 export default function CourseForm() {
   const theme = useTheme();
@@ -19,7 +20,8 @@ export default function CourseForm() {
 
   const [courseData, setCourseData] = useState({
     name: '',
-    description: ''
+    description: '',
+    code: ''
   });
 
   // Fetch course data for update if courseId is available
@@ -44,8 +46,10 @@ export default function CourseForm() {
 
     const formData = {
       name: e.target.name.value,
-      description: e.target.description.value
+      description: e.target.description.value,
+      code: e.target.code.value
     };
+    console.log(formData)
 
     try {
       const url = courseId ? config.apiUrl + `api/course-form-update/${courseId}` : config.apiUrl + 'api/course-form-add-new';
@@ -96,6 +100,27 @@ export default function CourseForm() {
                 />
               </Grid>
               <Grid item xs={12} sm={6}></Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="h5" component="h5">
+                  Course Code
+                </Typography>
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  name="code"
+                  type="text"
+                  value={courseData.code}
+                  onChange={(e) => setCourseData({ ...courseData, code: e.target.value })}
+                  sx={{ ...theme.typography.customInput }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <CodeIcon />
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Grid>
               <Grid item xs={12} sm={12}>
                 <Typography variant="h5" component="h5">
                   Description
