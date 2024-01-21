@@ -6,6 +6,7 @@ import { Button, CardActions, Divider, InputAdornment, Typography, useMediaQuery
 import { useTheme } from '@mui/material/styles';
 import { AccountCircle, Lock as LockIcon, Email as EmailIcon, MergeType as MergeTypeIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import config from '../../../config';
 
 export default function UserForm() {
   const theme = useTheme();
@@ -21,7 +22,7 @@ export default function UserForm() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`https://localhost:8080/api/user_types`);
+      const res = await fetch(config.apiUrl + `api/user_types`);
       const data = await res.json();
       setUserTypes(data);
     } catch (error) {
@@ -32,7 +33,7 @@ export default function UserForm() {
   const fetchUserData = async (userId) => {
     try {
       setLoading(true);
-      const res = await fetch(`https://localhost:8080/api/users/${userId}`);
+      const res = await fetch(config.apiUrl + `api/users/${userId}`);
       const userData = await res.json();
 
       // Set user data in the state
@@ -68,7 +69,7 @@ export default function UserForm() {
     };
 
     try {
-      const apiUrl = userId ? `https://localhost:8080/api/users/${userId}` : 'https://localhost:8080/api/users/add-new';
+      const apiUrl = userId ? config.apiUrl + `api/users/${userId}` : config.apiUrl + 'api/users/add-new';
 
       const res = await fetch(apiUrl, {
         // if update method should be put if add new method should be post

@@ -17,8 +17,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../../../context/useAuthContext';
+import config from '../../../config';
 
 export default function ViewLeads() {
+  const { user } = useAuthContext();
+  const { permissions } = user || {};
+  const { userType } = user || {};
   const navigate = useNavigate();
   // const { id } = useParams();
   const theme = useTheme();
@@ -86,7 +91,7 @@ export default function ViewLeads() {
 
               const updateLead = async () => {
                 try {
-                  const updateLead = await fetch(`https://localhost:8080/api/leads/${lid}`, {
+                  const updateLead = await fetch(config.apiUrl + `api/leads/${lid}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -150,19 +155,41 @@ export default function ViewLeads() {
   useEffect(() => {
     async function fetchLeads() {
       try {
-        const res = await fetch('https://localhost:8080/api/leads-details');
-        const data = await res.json();
+        const apiUrl = config.apiUrl + 'api/leads-details';
+        const res = await fetch(apiUrl);
 
-        console.log(data);
-        setData(data);
+        if (!res.ok) {
+          console.error('Error fetching leads data', res.statusText);
+          return;
+        }
+
+        const leads = await res.json();
+
+        // Assuming that the backend response is an array of leads
+        // Filter leads based on the counselor ID from the backend response
+        if (permissions?.lead?.includes('read-all')) {
+          setData(leads);
+          return;
+        } else if (permissions?.lead?.includes('read') && userType?.name === 'counselor') {
+          const filteredLeads = leads.filter((lead) => lead.counsellor_id === user._id);
+          setData(filteredLeads);
+          console.log(filteredLeads); // Log the filtered leads
+          return;
+        } else if (permissions?.lead?.includes('read') && userType?.name === 'user') {
+          const filteredLeads = leads.filter((lead) => lead.user_id === user._id);
+          setData(filteredLeads);
+          console.log(filteredLeads);
+          return;
+        }
       } catch (error) {
-        console.log('Error fetching courses:', error);
+        console.log('Error fetching leads:', error);
       }
     }
+
     fetchLeads();
     const fetchCourses = async () => {
       try {
-        const response = await fetch('https://localhost:8080/api/courses');
+        const response = await fetch(config.apiUrl + 'api/courses');
         if (response.ok) {
           const json = await response.json();
           setCourses(json);
@@ -176,7 +203,7 @@ export default function ViewLeads() {
     fetchCourses();
     const fetchSources = async () => {
       try {
-        const response = await fetch('https://localhost:8080/api/source');
+        const response = await fetch(config.apiUrl + 'api/source');
         if (response.ok) {
           const json = await response.json();
           setSources(json);
@@ -190,7 +217,7 @@ export default function ViewLeads() {
     fetchSources();
     async function getCounselors() {
       try {
-        const res = await fetch('https://localhost:8080/api/getCounsellors');
+        const res = await fetch(config.apiUrl + 'api/getCounsellors');
         const data = await res.json();
         setCounselors(data);
       } catch (error) {

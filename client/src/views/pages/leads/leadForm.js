@@ -20,6 +20,7 @@ import { useCallback } from 'react';
 import { Box } from '@mui/system';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
+import config from '../../../config';
 // import { useParams } from 'react-router-dom';
 
 export default function LeadForm() {
@@ -64,7 +65,7 @@ export default function LeadForm() {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch('https://localhost:8080/api/courses');
+      const response = await fetch(config.apiUrl + 'api/courses');
       if (response.ok) {
         const json = await response.json();
         setCourses(json);
@@ -77,7 +78,7 @@ export default function LeadForm() {
   };
   const fetchBranches = async () => {
     try {
-      const response = await fetch('https://localhost:8080/api/branches');
+      const response = await fetch(config.apiUrl + 'api/branches');
       if (response.ok) {
         const json = await response.json();
         setBranches(json);
@@ -90,7 +91,7 @@ export default function LeadForm() {
   };
   const fetchStatuses = async () => {
     try {
-      const response = await fetch('https://localhost:8080/api/status');
+      const response = await fetch(config.apiUrl + 'api/status');
       if (response.ok) {
         const json = await response.json();
         setStatuses(json);
@@ -104,7 +105,7 @@ export default function LeadForm() {
 
   const fetchLeadData = async () => {
     try {
-      const response = await fetch(`https://localhost:8080/api/leads/${leadId}`);
+      const response = await fetch(config.apiUrl + `api/leads/${leadId}`);
       if (response.ok) {
         const json = await response.json();
         setValues(json);
@@ -135,7 +136,7 @@ export default function LeadForm() {
     }
     const fetchStudents = async (searchTerm) => {
       try {
-        const response = await fetch(`https://localhost:8080/api/searchStudents?term=${searchTerm}`);
+        const response = await fetch(config.apiUrl + `api/searchStudents?term=${searchTerm}`);
         if (response.ok) {
           const students = await response.json();
           setStudentOptions(students);
@@ -193,7 +194,8 @@ export default function LeadForm() {
         try {
           //check duplicate lead
           const chceckDuplicate = await fetch(
-            `https://localhost:8080/api/checkLead?courseName=${values.course}&branchName=${values.branch}&studentName=${values.name}&contactNo=${values.contact_no}`
+            config.apiUrl +
+              `api/checkLead?courseName=${values.course}&branchName=${values.branch}&studentName=${values.name}&contactNo=${values.contact_no}`
           );
           if (!chceckDuplicate.ok) {
             console.error('Error checking duplicates', studentResponse.statusText);
@@ -207,7 +209,7 @@ export default function LeadForm() {
 
           if (duplicateLead.isDuplicate == false) {
             //insert student data
-            const studentResponse = await fetch('https://localhost:8080/api/students', {
+            const studentResponse = await fetch(config.apiUrl + 'api/students', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -227,7 +229,7 @@ export default function LeadForm() {
             console.log('Student ID:', student_id);
 
             //insert lead data
-            const leadResponse = await fetch('https://localhost:8080/api/leads', {
+            const leadResponse = await fetch(config.apiUrl + 'api/leads', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -247,7 +249,7 @@ export default function LeadForm() {
             const { _id: lead_id } = LeadData;
             console.log('Lead ID:', lead_id);
             //insert followup
-            const followUpResponse = await fetch('https://localhost:8080/api/followUps', {
+            const followUpResponse = await fetch(config.apiUrl + 'api/followUps', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -303,7 +305,7 @@ export default function LeadForm() {
             };
             console.log(updateStudentData);
             console.log(sid);
-            const updatestudent = await fetch(`https://localhost:8080/api/students/${sid}`, {
+            const updatestudent = await fetch(config.apiUrl + `api/students/${sid}`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(updateStudentData)
@@ -336,7 +338,7 @@ export default function LeadForm() {
             updateLeadData.scheduled_at = changedFields.scheduled_at;
           }
           console.log(changedFields);
-          const updateLead = await fetch(`https://localhost:8080/api/leads/${leadId}`, {
+          const updateLead = await fetch(config.apiUrl + `api/leads/${leadId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updateLeadData)
@@ -366,7 +368,7 @@ export default function LeadForm() {
             updateFollowupData.status = values.status;
           }
 
-          const addFollowup = await fetch(`https://localhost:8080/api/followUps`, {
+          const addFollowup = await fetch(config.apiUrl + `api/followUps`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updateFollowupData)

@@ -144,6 +144,8 @@ async function getLeadsSummaryDetails(req, res) {
         course: lead.course_id.name,
         branch: lead.branch_id.name,
         counsellor: lead.counsellor_id ? lead.counsellor_id.name : null,
+        counsellor_id: lead.counsellor_id ? lead.counsellor_id._id : null,
+        user_id: lead.user_id? lead.user_id : null,
         status: latestFollowUp ? latestFollowUp.status_id.name : null,
       };
 

@@ -10,6 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import MergeTypeIcon from '@mui/icons-material/MergeType';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import config from '../../../config';
 
 export default function ViewUsers() {
   const [userTypes, setUserTypes] = useState([]);
@@ -26,7 +27,7 @@ export default function ViewUsers() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`https://localhost:8080/api/users`);
+      const res = await fetch(config.apiUrl + 'api/users');
       const data = await res.json();
       const formattedData = data.map((item) => ({ id: item._id, ...item }));
       const filteredUsers = formattedData.filter(
@@ -47,7 +48,7 @@ export default function ViewUsers() {
     // Fetch user types
     const fetchUserTypes = async () => {
       try {
-        const res = await fetch(`https://localhost:8080/api/user_types`);
+        const res = await fetch(config.apiUrl + 'api/user_types');
         const data = await res.json();
         setUserTypes(data);
       } catch (error) {
@@ -76,29 +77,29 @@ export default function ViewUsers() {
       valueGetter: (params) => params.row.user_type?.name || ''
     },
     {
-        field: 'edit',
-        headerName: '',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        width: 200,
-        renderCell: (params) => (
-          <>
-            <ModeIcon
-              onClick={() => {
-                updateUser(params.row._id);
-              }}
-              style={{ color: 'black' }}
-            />
-            <DeleteIcon style={{ color: 'black', margin: 20 }} />
-          </>
-        )
-      }
-    ];
-  
-    function updateUser(userId) {
-      console.log('clicked user id', userId);
-      navigate('/app/users/add?id=' + userId);
+      field: 'edit',
+      headerName: '',
+      description: 'This column has a value getter and is not sortable.',
+      sortable: false,
+      width: 200,
+      renderCell: (params) => (
+        <>
+          <ModeIcon
+            onClick={() => {
+              updateUser(params.row._id);
+            }}
+            style={{ color: 'black' }}
+          />
+          <DeleteIcon style={{ color: 'black', margin: 20 }} />
+        </>
+      )
     }
+  ];
+
+  function updateUser(userId) {
+    console.log('clicked user id', userId);
+    navigate('/app/users/add?id=' + userId);
+  }
 
   if (loading) {
     return <div>Loading...</div>;
