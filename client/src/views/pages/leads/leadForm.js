@@ -2,7 +2,7 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
-import { Autocomplete, Button, CardActions, Divider, InputAdornment, Typography, debounce, useMediaQuery } from '@mui/material';
+import { Autocomplete, Button, CardActions, Divider, InputAdornment, Typography, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 // import { AccountCircle } from '@mui/icons-material';
 import DateRangeIcon from '@mui/icons-material/DateRange';
@@ -135,9 +135,9 @@ export default function LeadForm() {
     if (leadId) {
       fetchLeadData();
     }
-    const fetchStudents = async (searchTerm) => {
+    const fetchStudents = async () => {
       try {
-        const response = await fetch(config.apiUrl + `api/searchStudents?term=${searchTerm}`);
+        const response = await fetch(config.apiUrl + `api/searchStudents`);
         if (response.ok) {
           const students = await response.json();
           setStudentOptions(students);
@@ -150,14 +150,8 @@ export default function LeadForm() {
         console.error('Error fetching students:', error.message);
       }
     };
+    fetchStudents()
 
-    // Use the debounce function to avoid making too many requests in a short time
-    const debouncedFetchStudents = debounce(fetchStudents, 300);
-
-    // Update student options when the name value changes
-    if (values.name) {
-      debouncedFetchStudents(values.name);
-    }
   }, [values.name]);
 
   const handleChange = useCallback(
@@ -403,6 +397,9 @@ export default function LeadForm() {
     [values, changedFields]
   );
 
+
+
+
   return (
     <>
       <form autoComplete="off" noValidate onSubmit={handleSubmit}>
@@ -414,9 +411,11 @@ export default function LeadForm() {
                   Name
                 </Typography>
                 <Autocomplete
+                  disablePortal
                   options={studentOptions}
                   freeSolo
-                  getOptionLabel={(option) => option.name || ''}
+                  value={values.name}
+                  // getOptionLabel={(option) => option.name || ''}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -451,7 +450,7 @@ export default function LeadForm() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography variant="h5" component="h5">
-                  Dtae of birth
+                  Date of birth
                 </Typography>
                 <TextField
                   fullWidth
