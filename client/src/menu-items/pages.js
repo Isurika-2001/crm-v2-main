@@ -111,6 +111,13 @@ const pages = {
           breadcrumbs: false
         }
       ]
+    },
+    {
+      id: 'profile',
+      title: 'Profile',
+      type: 'item',
+      url: '/app/profile',
+      icon: icons.IconKey
     }
 
   ]
