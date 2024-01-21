@@ -25,11 +25,11 @@ async function getCourse(req, res) {
 
 // add new course - name, description(not required)
 async function addCourse(req, res) {
-    const { name, description } = req.body
+    const { name, description, code } = req.body
     if (!name) {
         res.status(400).json({ error: "Name is required" })
     }
-    const course = new Course({ name, description })
+    const course = new Course({ name, description, course_code: code })
     try {
         const newCourse = await course.save()
         res.status(201).json(newCourse)
